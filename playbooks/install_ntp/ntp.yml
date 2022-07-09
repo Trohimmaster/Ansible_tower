@@ -1,0 +1,26 @@
+---
+- name: ntp
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: install the latest version of ntp
+    yum:
+      name: ntp
+      state: latest
+
+  - name: check connection to host
+    ping:
+
+  - name: copy ntp.conf
+    copy:
+         src: files/ntp.conf
+         dest: /etc/ntp.conf
+         owner: root
+         group: root
+         mode: '0644'
+  - name: enable and restart service
+    service:
+        name: ntpd
+        state: restarted
+        enabled: yes
