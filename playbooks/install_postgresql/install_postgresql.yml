@@ -1,0 +1,39 @@
+---
+- name: Install Postgres {{version_postgresql}}
+  hosts: all
+  become: yes
+
+  tasks:
+
+  - name: copy postgres repo
+    copy:
+      src: './files/postgresql{{version_postgresql}}.repo'
+      dest: '/etc/yum.repos.d/postgres{{version_postgresql}}.repo'
+  
+  - name: 'Install postgres{{version_postgresql}}'
+    yum:
+      name:
+        - 'postgresql{{version_postgresql}}'
+        - 'postgresql{{version_postgresql}}-contrib'
+        - 'postgresql{{version_postgresql}}-server'
+        - 'postgresql{{version_postgresql}}-devel'
+        - 'postgresql{{version_postgresql}}-libs'
+      state: latest
+
+  - name: create /app/pg and /app/backup
+    file:
+      path: '/app/{{ item.path }}'
+      state: directory
+      owner: postgres
+      group: postgres
+    loop:
+      - { path: pg }
+      - { path: backup }
+      
+  - name: change owner /app
+    file:
+      path: /app/
+      state: touch
+      owner: postgres
+      group: postgres
+

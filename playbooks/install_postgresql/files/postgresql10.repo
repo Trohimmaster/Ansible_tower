@@ -1,0 +1,6 @@
+[Posgtresql10]
+name=postgresql10
+baseurl=https://download.postgresql.org/pub/repos/yum/10/redhat/
+enabled=1
+gpgcheck=0
+

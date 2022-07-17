@@ -1,0 +1,6 @@
+[Posgtresql12]
+name=postgresql12
+baseurl=https://download.postgresql.org/pub/repos/yum/12/redhat/
+enabled=1
+gpgcheck=0
+

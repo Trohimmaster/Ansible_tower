@@ -1,0 +1,6 @@
+[Posgtresql14]
+name=postgresql14
+baseurl=https://download.postgresql.org/pub/repos/yum/14/redhat/
+enabled=1
+gpgcheck=0
+

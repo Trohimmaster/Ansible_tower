@@ -1,0 +1,6 @@
+[Posgtresql11]
+name=postgresql11
+baseurl=https://download.postgresql.org/pub/repos/yum/11/redhat/
+enabled=1
+gpgcheck=0
+
