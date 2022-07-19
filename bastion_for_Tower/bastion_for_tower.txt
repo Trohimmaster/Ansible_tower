@@ -1,0 +1,20 @@
+############################################## Bastion host for Ansible Tower/AWX ################################################
+
+1. Create ssh-key for ansible user 
+$ ssh-keygen
+
+2. Create user on bastion host
+$ adduser ansible_user
+
+3. Create file /home/ansible_user/.ssh/authorized_keys on Bastion host and copy pub key here
+
+4. Permissions:
+#chown ansible_user:ansible_user .ssh/authorized_keys
+#chmod 644 .ssh/authorized_keys
+
+5. Open Ansible Tower/AWX web page, create new credential ansible_user with 'credetial type' - 'Machine' and add SSH key(look .pics/bastion_credential)
+
+6. Create invetory for hosts which available use bastion host, add to 'VARIABLES'(look pic ./pics/bastion_inventory):
+ansible_user: ansible_user
+ansible_connection: ssh
+ansible_ssh_common_args: '-o ProxyCommand="ssh -i ~/.ssh/id_rsa.pem -o StrictHostKeyChecking=no -W %h:%p -q ansible_user@bastion_hostname"'
