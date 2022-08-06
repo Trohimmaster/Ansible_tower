@@ -1,0 +1,29 @@
+---
+- name: update system
+  hosts: all
+  become: yes
+
+  vars:
+    packages:
+       - kernel*
+       - foo*
+       - java*
+       - nginx  
+       - posgtres  
+
+  tasks:
+  - name: Repo Update
+    yum:
+      update_cache: yes
+
+  - name: upgrade all packages, excluding kernel & foo related packages
+    yum:
+      name: '*'
+      state: latest
+      exclude: "{{ packages }}"
+
+  - name: reboot machine 
+    reboot:
+
+  - name: clear old kernel
+    command: package-cleanup --oldkernels --count=1 -y
