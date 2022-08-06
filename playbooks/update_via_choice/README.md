@@ -1,0 +1,1 @@
+This playbook update your system with exclude. We need add surway and create a variable with type 'list', add to list all packages what we want control in our update process, packages what we can exclude from update, to our template in ansible Tower/AWX. In my example I add kernel, nginx, java, posgtres and foo like a stub, when I dont want add exclude.
