@@ -1,0 +1,8 @@
+listen_address: {{ ansible_host }}:9890
+autoupdate: off
+no_track_mode: false
+services:
+  "postgres_{{ ansible_host }}:5432":
+    service_type: "postgres"
+    conninfo: "postgres://pgscv:{{ pgscv_dbpass }}@127.0.0.1:5432/postgres"
+

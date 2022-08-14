@@ -1,0 +1,51 @@
+---
+- name: Install pgscv
+  hosts: db
+  become: yes
+
+  vars:
+    pgscv_user: '{{ vault_pgscv.user }}'
+    pgscv_password: '{{ vault_pgscv.pass }}'
+    pgscv_config_dir: '/app/pg/pgscv'
+    pgscv_config_file: '{{ pgscv_config_dir }}/pgscv.yml'
+    pgscv_dbuser: 'pgscv'
+
+  vars_files:
+    - ./files/secret_dbpgscv.yml
+
+  tasks:
+
+  - name: Create pgscv config directory
+    file:
+      path: '{{ pgscv_config_dir }}'
+      state: directory
+      owner: postgres
+      group: postgres
+      mode: 0700
+
+  - name: Create service
+    template: src='./files/pgscv_service.j2' dest='/etc/systemd/system/pgscv.service'
+    notify: systemctl daemon-reload
+
+  - name: Create config file
+    template: src='./files/pgscv_yml.j2' dest={{ pgscv_config_dir }}/pgscv.yml mode=0666
+
+  - name: Copy pgscv binary
+    copy:
+      src: './files/postgres/pgscv'
+      dest: '{{ pgscv_config_dir }}'
+      mode: 0755
+      owner: postgres
+      group: postgres
+
+  - name: Start service
+    service: name=pgscv state=started enabled=yes
+
+  handlers:
+    - name: restart pgscv
+      service: name=pgscv state=restarted
+
+    - name: systemctl daemon-reload
+      command: systemctl daemon-reload
+      notify: restart pgscv
+
