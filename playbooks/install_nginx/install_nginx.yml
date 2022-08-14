@@ -1,0 +1,44 @@
+---
+- name: Install nginx
+  hosts: web
+  become: yes
+
+  vars:
+    source_folder: ./mywebsite/
+    dest_folder: /usr/share/nginx/
+    nginx_version: 1.18.0
+
+  tasks:
+
+  - name: Install Nginx for RedHat
+    yum:
+      name: nginx
+      state: "{{ nginx_version }}"
+    when: ansible_os_family == "RedHat"
+
+  - name: Install Nginx for Debian
+    apt:
+      name: nginx
+      state: "{{ nginx_version }}"
+    when: ansible_os_family == "Debian"
+
+  - name: Copy my Website to server
+    copy:
+      src: "{{ item }}"
+      dest: "{{ dest_folder }}"
+      mode: 0555
+    with_fileglob:
+          "{{ source_folder }}/*.*"
+    notify: restart nginx
+
+  - name: Start web server
+    service:
+      name: nginx
+      state: started
+      enabled: yes
+
+  handlers:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
