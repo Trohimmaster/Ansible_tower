@@ -1,0 +1,65 @@
+---
+- name: Install Apache web server with my test webpage
+  hosts: web
+  become: yes
+
+  vars:
+    source_folder: ./mywebsite/
+    destin_folder: /var/www/html
+
+  tasks:
+
+  - block:
+
+      - name: Install httpd web server for Redhat
+        yum:
+          name: httpd
+          state: latest
+
+      - name: Start web server
+        service:
+          name: httpd
+          state: started
+          enabled: yes
+
+    when: ansible_os_family == "RedHat"
+
+  - block:
+
+      - name: Install Apache2 web server for Debian
+        apt:
+          name: apache2
+          state: latest
+
+      - name: Start web server
+        service:
+          name: apache2
+          state: started
+          enabled: yes
+
+    when: ansible_os_family == "Debian"
+
+  - name: Copy MyPage to server
+    copy:
+      src: "{{ item }}"
+      dest: "{{ destin_folder }}"
+      mode: 0555
+    with_fileglob:
+            "{{ source_folder }}/*.*"
+    notify:
+      - restart httpd for RedHat
+      - restart apache2 for Debian
+
+  handlers:
+  - name: restart httpd for RedHat
+    service:
+      name: httpd
+      state: restarted
+    when: ansible_os_family == "RedHat"
+
+
+  - name: restart apache2 for Debian
+    service:
+      name: apache2
+      state: restarted
+    when: ansible_os_family == "Debian"
